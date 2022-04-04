@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {% include "head.html" %}
+</head>
+
+<body>
+    {% include "navbar.html" %}
+
+    {% include "sidebar.html" %}
+    <div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
+        <div class="panel panel-default">
+            <div class="panel-heading">Dataset</div>
+            <div class="panel-body btn-margins">
+                <div class="col-md-12">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama Makanan</th>
+                                <th>Energi/100 gram (kkal)</th>
+                                <th>Protein</th>
+                                <th>Lemak</th>
+                                <th>Karbohidrat</th>
+                                <th>Natrium</th>
+                                <th>Bahan - bahan</th>
+                                <th>Bahan(stemmed)</th>
+                                <th>Langkah Memasak</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for dataset in dataset %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{{ dataset.nama_makanan }}</td>
+                                <td>{{ dataset.energi }}</td>
+                                <td>{{ dataset.protein }}</td>
+                                <td>{{ dataset.lemak }}</td>
+                                <td>{{ dataset.karbo }}</td>
+                                <td>{{ dataset.natrium }}</td>
+                                <td>{{ dataset.bahan_bahan }}</td>
+                                <td>{{ dataset.bahan_stemmed }}</td>
+                                <td>{{ dataset.langkah }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        {% include "footer.html" %}
+    </div>
+    <!--/.main-->
+    {% include "scripts.html" %}
+
+</body>
+
+</html>

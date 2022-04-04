@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {% include "head.html" %}
+</head>
+
+<body>
+    {% include "navbar.html" %}
+
+    {% include "sidebar.html" %}
+    <div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
+        <div class="row">
+            <ol class="breadcrumb">
+                <li><a href="#">
+                        <em class="fa fa-home"></em>
+                    </a></li>
+                <li class="active">{{ pageData['breadcrumb'] }}</li>
+            </ol>
+        </div>
+        <!--/.row-->
+
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">{{ pageData['pageHeader'] }}</h1>
+            </div>
+        </div>
+        <!--/.row-->
+        <div class="panel panel-container">
+            <div class="row">
+                <div class="col-6 col-md-4">
+                    <div class="panel panel-teal panel-widget border-right">
+                        <em class="fa fa-xl fa-shopping-cart color-blue"></em>
+                            <div class="large">{{berat_badan}}</div>
+                            <div class="text-muted">Berat Badan</div>
+                        
+                    </div>
+                </div>
+                <div class="col-6 col-md-4">
+                    <div class="panel panel-blue panel-widget border-right">
+                        <em class="fa fa-xl fa-comments color-orange"></em>
+                            <div class="large">{{ tinggi_badan }}</div>
+                            <div class="text-muted">Tinggi Badan</div>
+                        
+                    </div>
+                </div>
+                <div class="col-6 col-md-4">
+                    <div class="panel panel-orange panel-widget border-right">
+                        <em class="fa fa-xl fa-users color-teal"></em>
+                            <div class="large">{{ usia }}</div>
+                            <div class="text-muted">Usia</div>
+                        
+                    </div>
+                </div>
+            </div>
+            <!--/.row-->
+        </div>
+        <div class="panel panel-container">
+            <div class="row">
+                <div class="col-sm-5 col-md-6">
+                    <div class="panel panel-teal panel-widget border-right">
+                        <em class="fa fa-xl fa-tachometer color-teal"></em>
+                            <div class="large">{{kalori_harian}}</div>
+                            <div class="text-muted">Kalori Total per Hari</div>
+                        
+                    </div>
+                </div>
+                <div class="col-sm-5 col-md-6">
+                    <div class="panel panel-blue panel-widget border-right">
+                        <em class="fa fa-xl fa-comments color-red"></em>
+                            <div class="large">{{sisa_kalori}}</div>
+                            <div class="text-muted">Sisa Kalori</div>
+                        
+                    </div>
+                </div>
+            </div>
+            <!--/.row-->
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">Rekomendasi untuk kamu</div>
+            <div class="panel-body btn-margins">
+                <div class="col-md-12">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Row</th>
+                                <th>Nama Makanan</th>
+                                <th>Energi/100 gram (kkal)</th>
+                                <th>Protein (gram)</th>
+                                <th>Lemak (gram)</th>
+                                <th>Karbohidrat (gram)</th>
+                                <th>Natrium (miligram)</th>
+                                <th>Bahan - bahan</th>
+                                <th>Langkah Memasak</th>
+                                <th>Porsi Pagi (gram)</th>
+                                <th>Porsi Siang (gram)</th>
+                                <th>Porsi Malam (gram)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for dataset_df in dataset_df %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{{ dataset_df.nama_makanan }}</td>
+                                <td>{{ dataset_df.energi }}</td>
+                                <td>{{ dataset_df.protein }}</td>
+                                <td>{{ dataset_df.lemak }}</td>
+                                <td>{{ dataset_df.karbo }}</td>
+                                <td>{{ dataset_df.natrium }}</td>
+                                <td>{{ dataset_df.bahan_bahan }}</td>
+                                <td>{{ dataset_df.langkah }}</td>
+                                <td>{{ dataset_df.pagi }}</td>
+                                <td>{{ dataset_df.siang }}</td>
+                                <td>{{ dataset_df.malam }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        {% include "footer.html" %}
+    </div>
+    <!--/.main-->
+    {% include "scripts.html" %}
+
+</body>
+
+</html>

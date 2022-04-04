@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {% include "head.html" %}
+</head>
+
+<body>
+    {% include "navbar.html" %}
+
+    {% include "sidebar.html" %}
+    <div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
+        <div class="row">
+            <ol class="breadcrumb">
+                <li><a href="#">
+                        <em class="fa fa-home"></em>
+                    </a></li>
+                <li class="active">{{ pageData['breadcrumb'] }}</li>
+            </ol>
+        </div>
+        <!--/.row-->
+
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">{{ pageData['pageHeader'] }}</h1>
+            </div>
+        </div>
+        <!--/.row-->
+        <form method="GET" action="{{url_for('recommender')}}">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <label class="control-label">Berat Badan</label>
+                            <div class="input-group">
+                                <input id="btn-input" type="number" class="form-control input-md"
+                                    placeholder="Berat Badan" name="berat_badan"><span class="input-group-addon">kg</span>
+                            </div> <br>
+                            <label class="control-label">Tinggi Badan</label>
+                            <div class="input-group">
+                                <input id="btn-input" type="number" class="form-control input-md"
+                                    placeholder="Tinggi Badan" name="tinggi_badan"><span class="input-group-addon">cm</span>
+                            </div> <br>
+                            <label class="control-label">Usia</label>
+                            <div class="input-group">
+                                <input id="btn-input" type="number" class="form-control input-md"
+                                    placeholder="Usia" name="usia"><span class="input-group-addon">tahun</span>
+                            </div>
+                            <!--jenis_kel = 'p'
+                            aktivitas = 2
+                            penyakit = 2
+                            c_makanan = 'daging'
+                            pref_bahan = 'wortel bawang'
+                            eaten_food = 'nasi tim, bakwan'
+                            eaten_food_mass = 200-->
+                            <br>
+                            <div class="input">
+                                <label class="control-label">Jenis Kelamin</label>
+                                <select class="form-control input-md" id="jenis_kelamin" name="jk">
+                                    <option value="0">Pilih</option>
+                                    <option value="1">Perempuan</option>
+                                    <option value="2">Laki - laki</option>
+                                </select>
+                            </div><br>
+                            <div class="input">
+                                <label class="control-label">Tingkat Aktivitas</label>
+                                <select class="form-control input-md" id="tingkat_aktivitas" name="aktivitas">
+                                    <option value="1">Sangat sedikit</option>
+                                    <option value="2">Sedikit</option>
+                                    <option value="3">Rata - rata</option>
+                                    <option value="4">Banyak</option>
+                                    <option value="5">Sangat banyak</option>
+                                </select>
+                            </div><br>
+                            <div class="input">
+                                <label class="control-label">Penyakit yang Diderita</label>
+                                <select class="form-control input-md" id="penyakit" name="penyakit">
+                                    <option value="0">Sehat</option>
+                                    <option value="1">Diabetes</option>
+                                    <option value="2">Overweight</option>
+                                    <option value="3">Hipertensi</option>
+                                </select>
+                            </div><br>
+                            <div class="input">
+                                <label class="control-label">Kandungan Makanan yang Tidak Dapat Dimakan</label>
+                                <input id="btn-input" type="text" class="form-control input-md"
+                                    placeholder="Makanan yang tidak boleh dimakan" name="c_makanan"><span class="input-group-btn">
+                                </span>
+                            </div><br>
+                            <div class="input">
+                                <label class="control-label">Preferensi Bahan Makanan</label>
+                                <input id="btn-input" type="text" class="form-control input-md"
+                                    placeholder="Ingin makan yang mengandung bahan apa?" name="pref_bahan"><span class="input-group-btn">
+                                </span>
+                            </div><br>
+                            <div class="input">
+                                <label class="control-label">Makanan yang Sudah Dimakan</label>
+                                <input id="btn-input" type="text" class="form-control input-md"
+                                    placeholder="Habis makan apa?" name="eaten_food"><span class="input-group-btn">
+                                </span>
+                            </div><br>
+                            <div class="input">
+                                <label class="control-label">Berat Makanan yang Sudah Dimakan</label>
+                                <input id="btn-input" type="text" class="form-control input-md"
+                                    placeholder="Berat makanan yang sudah dimakan" name="eaten_food_mass"><span class="input-group-btn">
+                                </span>
+                            </div> <br>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="input-group">
+                                <span class="input-group-btn">
+                                    <button type="submit" class="btn btn-primary btn-md" id="btn-chat">Send</button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        {% include "footer.html" %}
+    </div>
+    <!--/.main-->
+    {% include "scripts.html" %}
+
+</body>
+
+</html>

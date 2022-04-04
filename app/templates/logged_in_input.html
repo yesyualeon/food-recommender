@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {% include "head.html" %}
+</head>
+
+<body>
+    {% include "navbar.html" %}
+
+    {% include "sidebar.html" %}
+    <div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
+        <div class="row">
+            <ol class="breadcrumb">
+                <li><a href="#">
+                        <em class="fa fa-home"></em>
+                    </a></li>
+                <li class="active">{{ pageData['breadcrumb'] }}</li>
+            </ol>
+        </div>
+        <!--/.row-->
+
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">{{ pageData['pageHeader'] }}</h1>
+            </div>
+        </div>
+        <!--/.row-->
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <h2>Welcome</h2>
+                {% if session['name'] %}
+                <p>You login as {{ session['name'] }}</p>
+                {% else %}
+                <p>Not login yet</p>
+                {% endif %}
+            </div>
+        </div>
+            <p>{{ data.berat_badan }}</p>
+            <p>{{ data.riwayat_penyakit }}</p>
+            <p>{{ data.kalori_harian }}</p>
+            <p>{{ data.sisa_kalori }}</p>
+        <form method="POST" action="{{url_for('userDetail',id=id)}}">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <input type="hidden" name="penyakit" value="{{ data.riwayat_penyakit }}">
+                            <input type="hidden" name="kalori_harian" value="{{ data.kalori_harian }}">
+                            <input type="hidden" name="sisa_kalori" value="{{ data.sisa_kalori }}">
+                            <div class="input">
+                                <label class="control-label">Kandungan Makanan yang Tidak Dapat Dimakan</label>
+                                <input id="btn-input" type="text" class="form-control input-md"
+                                    placeholder="Makanan yang tidak boleh dimakan" name="c_makanan">{{ data.c_makanan }}<span class="input-group-btn">
+                                </span>
+                            </div><br>
+                            <div class="input">
+                                <label class="control-label">Preferensi Bahan Makanan</label>
+                                <input id="btn-input" type="text" class="form-control input-md"
+                                    placeholder="Ingin makan yang mengandung bahan apa?" name="pref_bahan">{{ data.pref_bahan }}<span class="input-group-btn">
+                                </span>
+                            </div><br>
+                            <div class="input">
+                                <label class="control-label">Makanan yang Sudah Dimakan</label>
+                                <input id="btn-input" type="text" class="form-control input-md"
+                                    placeholder="Habis makan apa?" name="eaten_food"><span class="input-group-btn">
+                                </span>
+                            </div><br>
+                            <div class="input">
+                                <label class="control-label">Berat Makanan yang Sudah Dimakan</label>
+                                <input id="btn-input" type="text" class="form-control input-md"
+                                    placeholder="Berat makanan yang sudah dimakan" name="eaten_food_mass"><span class="input-group-btn">
+                                </span>
+                            </div> <br>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="input-group">
+                                <span class="input-group-btn">
+                                    <button type="submit" class="btn btn-primary btn-md" id="btn-chat">Send</button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        {% include "footer.html" %}
+    </div>
+    <!--/.main-->
+    {% include "scripts.html" %}
+
+</body>
+
+</html>

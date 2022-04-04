@@ -1,0 +1,38 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flask Project</title>
+<link href="static/css/bootstrap.min.css" rel="stylesheet">
+<link href="static/css/font-awesome.min.css" rel="stylesheet">
+<link href="static/css/datepicker3.css" rel="stylesheet">
+<link href="static/css/styles.css" rel="stylesheet">
+<script type="text/javascript">
+    function setTheme(name){
+        var theme = document.getElementById('theme-css');
+        var style = 'css/theme-' + name + '.css';
+        if(theme){
+            theme.setAttribute('href', style);
+        } else {
+            var head = document.getElementsByTagName('head')[0];
+            theme = document.createElement("link");
+            theme.setAttribute('rel', 'stylesheet');
+            theme.setAttribute('href', style);
+            theme.setAttribute('id', 'theme-css');
+            head.appendChild(theme);
+        }
+        window.localStorage.setItem('lumino-theme', name);
+    }
+    var selectedTheme = window.localStorage.getItem('lumino-theme');
+    if(selectedTheme) {
+        setTheme(selectedTheme);
+    }
+    window.setTimeout(function(){
+            var el = document.getElementById('hide-theme');
+            el.parentNode.removeChild(el);
+        }, 5);
+</script>
+<!--Custom Font-->
+<link href="https://fonts.googleapis.com/css?family=Montserrat:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+<!--[if lt IE 9]>
+<script src="static/js/html5shiv.js"></script>
+<script src="static/js/respond.min.js"></script>
+<![endif]-->
