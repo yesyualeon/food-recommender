@@ -1,12 +1,15 @@
 from email.policy import default
+import email
+import email_validator
 from operator import index
 from venv import create
 from app import db
+from flask_login import UserMixin
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
-class Akun(db.Model):
+class Akun(UserMixin, db.Model):
     id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
     name = db.Column(db.String(250), nullable=False)
     email = db.Column(db.String(60), index=True, unique=True, nullable=False)

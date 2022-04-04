@@ -1,4 +1,4 @@
-#!/Users/elisha/flask-project/.venv/bin/python3
+#!/Users/elisha/food-recommender/.venv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys

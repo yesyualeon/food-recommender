@@ -4,7 +4,7 @@ from app.model.user import User
 from app.model.makanan import Makanan
 import csv
 from app import response, app, db
-from flask import request
+from flask import request, render_template
 import numpy as np
 from ast import literal_eval
 from sklearn.metrics.pairwise import cosine_similarity
@@ -221,9 +221,143 @@ def sisaKalori(data):
             'sisa_kalori': sisa_kalori
     }
 
-    result = save(data_user)
+    print("ini data user:", data_user)
+    #result = save(data_user)
+    ### INSERT DB ###
+    save(data_user)
 
-    return result
+    #Define a new data frame to store the preferred foods. Copy the contents of df to df_user
+    df_user = pd.DataFrame(dataset)
+    df_u = {'berat_badan': data['berat_badan'],
+            'tinggi_badan': data['tinggi_badan'],
+            'usia': data['usia'],
+            'jenis_kelamin': data['jenis_kelamin'],
+            'aktivitas': data['tingkat_aktivitas'],
+            'penyakit': data['penyakit'],
+            'constraint_makanan': c_makanan,
+            'pref_bahan': data['pref_bahan'],
+            'eaten_food': eaten_food,
+            'eaten_food_mass': eaten_food_mass,
+            'bmr': bmr_u,
+            'kalori_harian': kalori_harian,
+            'sisa_kalori': sisa_kalori,
+            'kalori_pagi': kalori_pagi,
+            'kalori_siang': kalori_siang,
+            'kalori_malam': kalori_malam,
+            'kalori_snack_pagi': kalori_snack_pagi,
+            'kalori_snack_sore': kalori_snack_sore}
+    print(type(df_user))
+    df_user['protein'] = df_user['protein'].astype(float)
+    df_user['natrium'] = df_user['natrium'].astype(float)
+    df_user['energi'] = df_user['energi'].astype(float)
+    print(type(df_user))
+
+    #c_makanan = df_u['constraint_makanan'].values[0]
+    #c_makanan = str(c_makanan)
+    #print(c_makanan)
+    df_user_new = pd.DataFrame(dataset)
+
+    #Filter based on the condition
+    df_user = df_user[~df_user['kategori_masakan'].str.contains('side_dish')]
+    df_user = df_user[df_user['energi'] <= sisa_kalori]
+    if (c_makanan == '0'):
+        print(df_user)
+        print("df user sebelum masuk ke filtering:")
+        print(type(df_user))
+        print('penyakit:')
+        print(data['penyakit'])
+        if (data['penyakit'] == '0'): df_user = df_user[(df_user.protein <= (100 - protein_eaten_food)) & (df_user.natrium <= (3000 - natrium_eaten_food))]
+        elif (data['penyakit'] == '1'): df_user = df_user[(df_user.protein <= (100 - protein_eaten_food)) & (df_user.natrium <= (3000 - natrium_eaten_food))]
+        elif data['penyakit'] == '2': df_user = df_user[(df_user.protein <= (75 - protein_eaten_food)) & (df_user.natrium <= (3000 - natrium_eaten_food))]
+        elif (data['penyakit'] == '3'): df_user = df_user[(df_user.protein <= (100 - protein_eaten_food)) & (df_user.natrium <= (2500 - natrium_eaten_food))]
+        else: print("invalid")
+        print('df_user baru woyyyyy:')
+        print(df_user)
+        print(type(df_user))
+    else:
+    #df_user = df_user.where(c_makanan not in df_user['bahan_stemmed'])
+        if (data['penyakit'] == '0'): df_user = df_user[(df_user.protein <= (100 - protein_eaten_food)) & (df_user.natrium <= (3000 - natrium_eaten_food))]
+        elif (data['penyakit'] == '1'): df_user = df_user[(df_user.protein <= (100 - protein_eaten_food)) & (df_user.natrium <= (3000 - natrium_eaten_food))]
+        elif (data['penyakit'] == '2'): df_user = df_user[(df_user.protein <= (75 - protein_eaten_food)) & (df_user.natrium <= (3000 - natrium_eaten_food))]
+        elif (data['penyakit'] == '3'): df_user = df_user[(df_user.protein <= (100 - protein_eaten_food)) & (df_user.natrium <= (2500 - natrium_eaten_food))]
+        else: print("invalid")
+        for cons in c_makanan:    
+            df_user = df_user[~df_user['bahan_stemmed'].str.contains(cons)]
+        print('df_user baru woyyyyy:')
+        print(df_user)
+        print(type(df_user))
+    
+    print("df user hasil KB:")
+    print(df_user)
+
+    df_user['pagi'] = np.round((100 * kalori_pagi / df_user['energi'].values),1)
+    print("ini porsi pagi:", df_user['pagi'])
+    df_user['siang'] = np.round((100 * kalori_siang / df_user['energi'].values),1)
+    print("ini porsi siang:", df_user['siang'])
+    df_user['malam'] = np.round((100 * kalori_malam / df_user['energi'].values),1)
+    print("ini porsi malam:", df_user['malam']) 
+    pref_preprocessing = preprocessing(data['pref_bahan'], df_u, df_user)
+    #pref_preprocessing
+
+    tfidf_train = tfidf_func(df_user)
+    #print(tfidf_train)
+
+    cossim_train = cossim_func(tfidf_train)
+    #print(cossim_train)
+
+    personal_recommendations = recommendation_result(pref_preprocessing)
+
+    data_df = personal_recommendations
+    print("ini data_df:")
+    print(data_df.columns.values)
+    print(data_df)
+    data_df = personal_recommendations.values.tolist()
+    print("ini list dataframe:")
+    print(data_df)
+    print("tipe data_Df: ")
+    print(type(data_df))
+    first_line = True
+    dataset_df = []
+    for row in data_df:
+        #row = row.tolist()
+        #print(isinstance(row,list))
+        print("ini type row:")
+        print(type(row))
+        #if (isinstance(row,list)):
+        #    print(row)
+        #    dataset_df.append(row)
+        if not first_line:
+            print(row[1])
+            dataset_df.append({
+            "nama_makanan": row[0],
+            "energi": row[1],
+            "protein": row[2],
+            "lemak": row[3],
+            "karbo": row[4],
+            "natrium": row[5],
+            "bahan_bahan": row[6],
+            "langkah" : row[7],
+            "pagi": row[8],
+            "siang": row[9],
+            "malam": row[10]
+            })
+        else:
+            first_line = False
+    pageData = {
+        "breadcrumb": "Rekomendasi",
+        "pageHeader": "Sistem Rekomendasi"
+    }
+    return render_template("recommender.html",
+                            pageData=pageData,
+                            berat_badan = data['berat_badan'],
+                            tinggi_badan = data['tinggi_badan'],
+                            usia = data['usia'],
+                            kalori_harian = kalori_harian,
+                            sisa_kalori = sisa_kalori,
+                            menu='data', submenu='data', dataset_df=dataset_df)
+
+
+    #return result
 
 
         
@@ -231,13 +365,14 @@ def sisaKalori(data):
 
 def save(data):
     try:
+        print("ini data fungsi save", data)
         berat_badan = data["berat_badan"]
         tinggi_badan = data["tinggi_badan"]
         usia = data["usia"]
         jenis_kelamin = data["jenis_kelamin"]
         tingkat_aktivitas = data["tingkat_aktivitas"]
         penyakit = data["penyakit"]
-        c_makanan = data["c_makanan"]
+        c_makanan = str(data["c_makanan"])
         pref_bahan = data["pref_bahan"]
         eaten_food = data["eaten_food"]
         eaten_food_mass = data["eaten_food_mass"]
@@ -247,10 +382,9 @@ def save(data):
         sisa_kalori = data["sisa_kalori"]
 
         #tampung constructor nya
-        users = User(umur=usia, jenis_kelamin=jenis_kelamin, berat_badan=berat_badan, tinggi_badan=tinggi_badan, aktivitas_fisik=tingkat_aktivitas, riwayat_penyakit=penyakit, c_makanan=c_makanan, pref_bahan=pref_bahan, bmr=bmr, jumlah_kalori_per_hari=kalori_harian, sisa_kalori=sisa_kalori, id_user=id_user)
+        users = User(id_user=id_user, umur=usia, jenis_kelamin=jenis_kelamin, berat_badan=berat_badan, tinggi_badan=tinggi_badan, aktivitas_fisik=tingkat_aktivitas, riwayat_penyakit=penyakit, c_makanan=c_makanan, pref_bahan=pref_bahan, bmr=bmr, jumlah_kalori_per_hari=kalori_harian, sisa_kalori=sisa_kalori)
         db.session.add(users)
         db.session.commit()
-
 
         return response.success('', 'Sukses menambahkan data user!')
     except Exception as e:

@@ -26,11 +26,12 @@
             </div>
         </div>
         <!--/.row-->
-        <form method="POST" action="{{url_for('inputData',id=id)}}">
+        <form method="POST" action="{{url_for('inputData',id=current_user.id)}}">
             <div class="row">
                 <div class="col-md-12">
                     <div class="panel panel-default">
                         <div class="panel-body">
+                            <input type="hidden" name="id_user" value="{{ current_user.id }}">
                             <label class="control-label">Berat Badan</label>
                             <div class="input-group">
                                 <input id="btn-input" type="number" class="form-control input-md"

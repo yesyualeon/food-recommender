@@ -1,7 +1,9 @@
 from crypt import methods
 from turtle import heading
+from unicodedata import name
 from flask import render_template, request, session, redirect, url_for
 from app import app
+from app.model.akun import Akun
 from app.module import UserController, AkunController
 import pandas as pd
 import numpy as np
@@ -17,6 +19,9 @@ from nltk.corpus import stopwords
 from nltk import word_tokenize
 from nltk.stem import PorterStemmer
 from nltk.stem import WordNetLemmatizer
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
 #from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
 #nltk.download('stopwords')
 
@@ -28,6 +33,8 @@ from nltk.stem import WordNetLemmatizer
 #        "pages": "dashboard.html"
 #    }
 #    return render_template("home.html", pageData=pageData)
+
+db = SQLAlchemy(app)
 
 @app.route("/")
 def data(): #fungsi yang akan dijalankan ketike route dipanggil
@@ -155,7 +162,7 @@ def input():
         "breadcrumb": "Input",
         "pageHeader": "Input Data"
     }
-    return render_template("input.html", pageData=pageData)
+    return render_template("cobainput.html", pageData=pageData)
 
 @app.route('/recommender', methods=["GET"])
 def recommender():
@@ -436,16 +443,59 @@ def admins():
     return AkunController.buatAkun()
 
 
-@app.route('/login', methods=['GET','POST'])
-def logins():
-    if request.method == 'POST':
-        return AkunController.login()
-    else:
-        pageData = {
+#@app.route('/login', methods=['GET','POST'])
+#def logins():
+#    if request.method == 'POST':
+#        return AkunController.login()
+#    else:
+#        pageData = {
+#        "breadcrumb": "Input",
+#        "pageHeader": "Input Data"
+#        }
+#        return render_template("login.html", pageData=pageData)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    pageData = {
         "breadcrumb": "Input",
         "pageHeader": "Input Data"
-        }
-        return render_template("login.html", pageData=pageData)
+    }
+
+    form = AkunController.LoginForm()
+
+    if form.validate_on_submit():
+        user = Akun.query.filter_by(name=form.name.data).first()
+        if user:
+            if check_password_hash(user.password, form.password.data):
+                login_user(user, remember=form.remember.data)
+                return redirect(url_for('input'))
+        return '<h1>Invalid name or password</h1>'
+        #return '<h1>' + form.name.data + ' ' + form.password.data + '</h1>'
+    return render_template('login.html', form=form, pageData=pageData)
+
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    form = AkunController.RegisterForm()
+
+    if form.validate_on_submit():
+        hashed_password = generate_password_hash(form.password.data, method='sha256')
+        new_user = Akun(name=form.name.data, email=form.email.data, password=hashed_password)
+        db.session.add(new_user)
+        db.session.commit()
+
+        return '<h1>New user has been created!</h1>'
+        
+        #return '<h1>' + form.username.data + ' ' + form.email.data + ' ' + form.password.data + '</h1>'
+    
+    return render_template('signup.html', form=form)
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
 
 
 @app.route('/user', methods=['GET'])
@@ -516,6 +566,7 @@ def userDetail(id):
             "breadcrumb": "Input",
             "pageHeader": "Input Data"
         }
+        id_user = request.form["id_user"]
         c_makanan = request.form["c_makanan"]
         c_makanan = str(c_makanan)
         penyakit = request.form["penyakit"]
@@ -527,7 +578,7 @@ def userDetail(id):
         #eaten_food = [eaten_food]
         eaten_food_mass = request.form["eaten_food_mass"]
         data = {
-            'id_user': id,
+            'id_user': id_user,
             'c_makanan': c_makanan,
             'penyakit': penyakit,
             'pref_bahan': pref_bahan,

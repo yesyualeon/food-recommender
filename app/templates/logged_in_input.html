@@ -45,6 +45,8 @@
                 <div class="col-md-12">
                     <div class="panel panel-default">
                         <div class="panel-body">
+
+                            <input type="hidden" name="penyakit" value="{{ current_user.id }}">
                             <input type="hidden" name="penyakit" value="{{ data.riwayat_penyakit }}">
                             <input type="hidden" name="kalori_harian" value="{{ data.kalori_harian }}">
                             <input type="hidden" name="sisa_kalori" value="{{ data.sisa_kalori }}">
