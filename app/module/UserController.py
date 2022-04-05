@@ -118,6 +118,11 @@ def recommendation_result(pref_preprocessing, cosine_sim = cossim_func):
 
 
 def sisaKalori(data):
+    pageData = {
+        "breadcrumb": "Rekomendasi",
+        "pageHeader": "Sistem Rekomendasi"
+    }
+
     #eaten_food_mass = float(eaten_food_mass)
     kalori_harian = 0
     sisa_kalori = 0
@@ -343,10 +348,7 @@ def sisaKalori(data):
             })
         else:
             first_line = False
-    pageData = {
-        "breadcrumb": "Rekomendasi",
-        "pageHeader": "Sistem Rekomendasi"
-    }
+    
     return render_template("recommender.html",
                             pageData=pageData,
                             berat_badan = data['berat_badan'],
