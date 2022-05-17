@@ -1,8 +1,9 @@
 from email.policy import default
 from enum import unique
-from app import db
+from app import db, model
 from datetime import datetime
 from app.model.akun import Akun
+from app.model.makanan import Makanan
 
 
 class User(db.Model):

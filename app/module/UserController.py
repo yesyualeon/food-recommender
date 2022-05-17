@@ -1,10 +1,12 @@
 from unittest import result
 import pandas as pd
 from app.model.user import User
+from app.model.rekomendasi import Rekomendasi
 from app.model.makanan import Makanan
+from app.module import makanancontroller
 import csv
 from app import response, app, db
-from flask import request, render_template
+from flask import request, render_template, redirect, url_for
 import numpy as np
 from ast import literal_eval
 from sklearn.metrics.pairwise import cosine_similarity
@@ -91,14 +93,21 @@ def recommendation_result(pref_preprocessing, cosine_sim = cossim_func):
 
     #sort based on the highest similarity score
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+    print("ini isi sim_scores: ")
+    print(sim_scores)
+    print(type(sim_scores))
+    print ("Number of items in the list = ", len(sim_scores))
+    print("print nonzero:", np.count_nonzero(sim_scores, axis=0))
 
     #get top 5 recommendations without the user's preference (without score = 1)
     sim_scores = sim_scores[1:7]
     for i in sim_scores:
       print(i)
     sim_index = [i[0] for i in sim_scores]
-    #print(sim_index)
-    #print(pref_preprocessing['nama_makanan'].iloc[sim_index])
+    print("ini isi sim_index:")
+    print(sim_index)
+    print("ini isi recommended_food:")
+    print(pref_preprocessing['nama_makanan'].iloc[sim_index])
     #recommended_food = print(pref_preprocessing['nama_makanan'].iloc[sim_index])
     recommended_food = pref_preprocessing['nama_makanan'].iloc[sim_index]
     data = {'Nama Makanan':recommended_food,
@@ -123,30 +132,55 @@ def sisaKalori(data):
         "pageHeader": "Sistem Rekomendasi"
     }
 
+
     #eaten_food_mass = float(eaten_food_mass)
     kalori_harian = 0
     sisa_kalori = 0
 
-    with open('/Users/elisha/flask-project/app/module/food_dataset_seminar.csv', encoding= 'unicode_escape') as csv_file:
-        data_apa = csv.reader(csv_file, delimiter=',')
-        first_line = True
-        dataset = []
-        for row in data_apa:
-            if not first_line:
-                dataset.append({
-                "nama_makanan": row[1],
-                "energi": row[2],
-                "protein": row[3],
-                "lemak": row[4],
-                "karbo":row[5],
-                "natrium" : row[6],
-                "bahan_bahan": row[7],
-                "bahan_stemmed" : row[8],
-                "langkah" : row[9],
-                "kategori_masakan": row[10]
-                })
-            else:
-                first_line = False
+    #with open('/Users/elisha/flask-project/app/module/food_dataset_seminar.csv', encoding= 'unicode_escape') as csv_file:
+    #    data_apa = csv.reader(csv_file, delimiter=',')
+    #    first_line = True
+    #    dataset = []
+    #    for row in data_apa:
+    #        if not first_line:
+    #            dataset.append({
+    #            "nama_makanan": row[1],
+    #            "energi": row[2],
+    #            "protein": row[3],
+    #            "lemak": row[4],
+    #            "karbo":row[5],
+    #            "natrium" : row[6],
+    #            "bahan_bahan": row[7],
+    #            "bahan_stemmed" : row[8],
+    #            "langkah" : row[9],
+    #            "kategori_masakan": row[10]
+    #            })
+    #        else:
+    #            first_line = False
+
+    data_apa = makanancontroller.readMakanan()
+    print(data_apa)
+    print(type(data_apa))
+    df = data_apa.values.tolist()
+    print(df)
+    first_line = True
+    dataset = []
+    for row in df:
+        if not first_line:
+            dataset.append({
+            "nama_makanan": row[0],
+            "energi": row[1],
+            "protein": row[2],
+            "lemak": row[3],
+            "karbo":row[4],
+            "natrium" : row[5],
+            "bahan_bahan": row[6],
+            "bahan_stemmed": row[7],
+            "langkah": row[8],
+            "kategori_masakan": row[9]
+            })
+        else:
+            first_line = False
 
     #Hitung BMR pengguna
     if (data['jenis_kelamin'] == 2): bmr_u = 10 * data['berat_badan'] + 6.25 * data['tinggi_badan'] - 5 * data['usia'] + 5
@@ -349,6 +383,23 @@ def sisaKalori(data):
         else:
             first_line = False
     
+    #data_user_output = {
+    #                    'berat_badan' : data['berat_badan'],
+    #                    'tinggi_badan' : data['tinggi_badan'],
+    #                    'usia' : data['usia'],
+    #                    'kalori_harian' : kalori_harian,
+    #                    'sisa_kalori' : sisa_kalori,
+    #                    'dataset_df' : dataset_df
+    #}
+    id_makanan = personal_recommendations.index
+    id_makanan = id_makanan.tolist()
+    print("list id makanan:", id_makanan)
+    data_rekomendasi = {
+            'id_user':data['id_user'],
+            'id_makanan':id_makanan
+    }
+    print(data_rekomendasi)
+    save_rec(data_rekomendasi)
     return render_template("recommender.html",
                             pageData=pageData,
                             berat_badan = data['berat_badan'],
@@ -358,8 +409,7 @@ def sisaKalori(data):
                             sisa_kalori = sisa_kalori,
                             menu='data', submenu='data', dataset_df=dataset_df)
 
-
-    #return result
+    #return data_user_output
 
 
         
@@ -386,6 +436,22 @@ def save(data):
         #tampung constructor nya
         users = User(id_user=id_user, umur=usia, jenis_kelamin=jenis_kelamin, berat_badan=berat_badan, tinggi_badan=tinggi_badan, aktivitas_fisik=tingkat_aktivitas, riwayat_penyakit=penyakit, c_makanan=c_makanan, pref_bahan=pref_bahan, bmr=bmr, jumlah_kalori_per_hari=kalori_harian, sisa_kalori=sisa_kalori)
         db.session.add(users)
+        db.session.commit()
+
+        return response.success('', 'Sukses menambahkan data user!')
+    except Exception as e:
+        print(e)
+
+
+def save_rec(data):
+    try:
+        print("ini data fungsi save", data)
+        id_user = data["id_user"]
+        id_makanan = data["id_makanan"]
+
+        #tampung constructor nya
+        foods = Rekomendasi(id_user=id_user, id_makanan=id_makanan)
+        db.session.add(foods)
         db.session.commit()
 
         return response.success('', 'Sukses menambahkan data user!')

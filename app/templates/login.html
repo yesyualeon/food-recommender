@@ -12,7 +12,7 @@ Login
 {% block content %}
     <div class="container">
 
-      <form class="form-signin" method="POST" action="/login">
+      <form class="form-signin" method="POST" action="/">
         <h2 class="form-signin-heading">Please sign in</h2>
         {{ form.hidden_tag() }}
         {{ wtf.form_field(form.name) }}
@@ -20,6 +20,11 @@ Login
         {{ wtf.form_field(form.remember) }}
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
       </form>
+      <div class="row justify-content-start form-signin">
+        <h4 class="center">Have not registered yet?</h4>
+        <a href="/login"><button class="btn btn-lg btn-primary btn-block"
+            style="background-color:white; border-color:rgb(40, 96, 144); color:rgb(40, 96, 144)">Sign Up</button></a>
+    </div>
 
     </div> <!-- /container -->
 {% endblock %}

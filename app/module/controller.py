@@ -2,9 +2,10 @@ from crypt import methods
 from turtle import heading
 from unicodedata import name
 from flask import render_template, request, session, redirect, url_for
+from sklearn import datasets
 from app import app
 from app.model.akun import Akun
-from app.module import UserController, AkunController
+from app.module import UserController, AkunController, makanancontroller
 import pandas as pd
 import numpy as np
 from ast import literal_eval
@@ -36,29 +37,52 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy(app)
 
-@app.route("/")
+@app.route("/home")
 def data(): #fungsi yang akan dijalankan ketike route dipanggil
-    with open('/Users/elisha/flask-project/app/module/food_dataset_seminar.csv', encoding= 'unicode_escape') as csv_file:
-        data = csv.reader(csv_file, delimiter=',')
-        first_line = True
-        dataset = []
-        for row in data:
-            if not first_line:
-                dataset.append({
-                "nama_makanan": row[1],
-                "energi": row[2],
-                "protein": row[3],
-                "lemak": row[4],
-                "karbo":row[5],
-                "natrium" : row[6],
-                "bahan_bahan": row[7],
-                "bahan_stemmed" : row[8],
-                "langkah" : row[9]
-                })
-            else:
-                first_line = False
+    #with open('/Users/elisha/flask-project/app/module/food_dataset_seminar.csv', encoding= 'unicode_escape') as csv_file:
+    #    data = csv.reader(csv_file, delimiter=',')
+    #    first_line = True
+    #    dataset = []
+    #    for row in data:
+    #        if not first_line:
+    #            dataset.append({
+    #            "nama_makanan": row[1],
+    #            "energi": row[2],
+    #            "protein": row[3],
+    #            "lemak": row[4],
+    #            "karbo":row[5],
+    #            "natrium" : row[6],
+    #            "bahan_bahan": row[7],
+    #            "bahan_stemmed" : row[8],
+    #            "langkah" : row[9]
+    #            })
+    #        else:
+    #            first_line = False
+    data = makanancontroller.readMakanan()
+    print(data)
+    print(type(data))
+    df = data.values.tolist()
+    print(df)
+    first_line = True
+    dataset = []
+    for row in df:
+        if not first_line:
+            dataset.append({
+            "nama_makanan": row[0],
+            "energi": row[1],
+            "protein": row[2],
+            "lemak": row[3],
+            "karbo":row[4],
+            "natrium" : row[5],
+            "bahan_bahan": row[6],
+            "bahan_stemmed": row[7],
+            "langkah": row[8]
+            })
+        else:
+            first_line = False
+    
     return render_template('data.html', menu='data', submenu='data', dataset=dataset)
-
+    
 clean_spcl = re.compile('[/(){}\[\]\|@,;]')
 clean_symbol = re.compile('[^0-9a-z #+_]')
 stopworda = set(stopwords.words('indonesian'))
@@ -454,7 +478,7 @@ def admins():
 #        }
 #        return render_template("login.html", pageData=pageData)
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def login():
     pageData = {
         "breadcrumb": "Input",
@@ -506,50 +530,50 @@ def users():
 @app.route('/create/<id>', methods=['GET', 'POST'])
 def inputData(id):
     pageData = {
-        "breadcrumb": "Input",
-        "pageHeader": "Input Data"
+        "breadcrumb": "Rekomendasi",
+        "pageHeader": "Sistem Rekomendasi"
     }
-    if request.method == 'POST':
-        berat_badan = float(request.form["berat_badan"])
-        #berat_badan = [berat_badan]
-        tinggi_badan = float(request.form["tinggi_badan"])
-        #tinggi_badan = [tinggi_badan]
-        usia = int(request.form["usia"])
-        #usia = [usia]
-        jenis_kelamin = request.form["jk"]
-        #jenis_kelamin = [jenis_kelamin]
-        jenis_kelamin = int(jenis_kelamin)
-        tingkat_aktivitas = request.form["aktivitas"]
-        #tingkat_aktivitas = [tingkat_aktivitas]
-        tingkat_aktivitas = int(tingkat_aktivitas)
-        penyakit = request.form["penyakit"]
-        #penyakit = int(penyakit)
-        c_makanan = request.form["c_makanan"]
-        c_makanan = str(c_makanan)
-        pref_bahan = request.form["pref_bahan"]
-        pref_bahan = str(pref_bahan)
-        eaten_food = request.form["eaten_food"]
-        #eaten_food = [eaten_food]
-        eaten_food_mass = request.form["eaten_food_mass"]
-        data = {
-            'id_user': id,
-            'berat_badan': berat_badan,
-            'tinggi_badan': tinggi_badan,
-            'usia': usia,
-            'jenis_kelamin': jenis_kelamin,
-            'tingkat_aktivitas': tingkat_aktivitas,
-            'penyakit': penyakit,
-            'c_makanan': c_makanan,
-            'pref_bahan': pref_bahan,
-            'eaten_food': eaten_food,
-            'eaten_food_mass': eaten_food_mass
-        }
-        print(data)
-        result = UserController.sisaKalori(data)
-        #return UserController.save()
-        return result
-    else:
-        return render_template("cobainput.html", id=id, pageData=pageData)
+    #if request.method == 'POST':
+    berat_badan = float(request.form["berat_badan"])
+    #berat_badan = [berat_badan]
+    tinggi_badan = float(request.form["tinggi_badan"])
+    #tinggi_badan = [tinggi_badan]
+    usia = int(request.form["usia"])
+    #usia = [usia]
+    jenis_kelamin = request.form["jk"]
+    #jenis_kelamin = [jenis_kelamin]
+    jenis_kelamin = int(jenis_kelamin)
+    tingkat_aktivitas = request.form["aktivitas"]
+    #tingkat_aktivitas = [tingkat_aktivitas]
+    tingkat_aktivitas = int(tingkat_aktivitas)
+    penyakit = request.form["penyakit"]
+    #penyakit = int(penyakit)
+    c_makanan = request.form["c_makanan"]
+    c_makanan = str(c_makanan)
+    pref_bahan = request.form["pref_bahan"]
+    pref_bahan = str(pref_bahan)
+    eaten_food = request.form["eaten_food"]
+    #eaten_food = [eaten_food]
+    eaten_food_mass = request.form["eaten_food_mass"]
+    data = {
+        'id_user': id,
+        'berat_badan': berat_badan,
+        'tinggi_badan': tinggi_badan,
+        'usia': usia,
+        'jenis_kelamin': jenis_kelamin,
+        'tingkat_aktivitas': tingkat_aktivitas,
+        'penyakit': penyakit,
+        'c_makanan': c_makanan,
+        'pref_bahan': pref_bahan,
+        'eaten_food': eaten_food,
+        'eaten_food_mass': eaten_food_mass
+    }
+    print(data)
+    result = UserController.sisaKalori(data)
+    #return UserController.save()
+    return result
+    #else:
+    #    return render_template("recommender.html", id=id, pageData=pageData)
 
 @app.route('/user/<id>', methods=['GET', 'POST'])
 def userDetail(id):
@@ -591,6 +615,14 @@ def userDetail(id):
         return render_template("logged_in_input.html", id=id, pageData=pageData, data=getDetail)
         #return UserController.ubah(id)
 
+
+@app.route('/createmakanan')
+def makanan():
+    return makanancontroller.inputmakanan()
+
+
 @app.errorhandler(404)
 def notfound(error):
     return render_template("404.html")
+
+    
