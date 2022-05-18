@@ -262,6 +262,7 @@ def sisaKalori(data):
 
     print("ini data user:", data_user)
     #result = save(data_user)
+    
     ### INSERT DB ###
     save(data_user)
 
@@ -383,33 +384,34 @@ def sisaKalori(data):
         else:
             first_line = False
     
-    #data_user_output = {
-    #                    'berat_badan' : data['berat_badan'],
-    #                    'tinggi_badan' : data['tinggi_badan'],
-    #                    'usia' : data['usia'],
-    #                    'kalori_harian' : kalori_harian,
-    #                    'sisa_kalori' : sisa_kalori,
-    #                    'dataset_df' : dataset_df
-    #}
+    data_user_output = {
+                        'berat_badan' : data['berat_badan'],
+                        'tinggi_badan' : data['tinggi_badan'],
+                        'usia' : data['usia'],
+                        'kalori_harian' : kalori_harian,
+                        'sisa_kalori' : sisa_kalori,
+                        'dataset_df' : dataset_df
+    }
     id_makanan = personal_recommendations.index
     id_makanan = id_makanan.tolist()
     print("list id makanan:", id_makanan)
-    data_rekomendasi = {
+    print(type(id_makanan))
+    for i in id_makanan:
+        data_rekomendasi = {
             'id_user':data['id_user'],
-            'id_makanan':id_makanan
-    }
-    print(data_rekomendasi)
-    save_rec(data_rekomendasi)
-    return render_template("recommender.html",
-                            pageData=pageData,
-                            berat_badan = data['berat_badan'],
-                            tinggi_badan = data['tinggi_badan'],
-                            usia = data['usia'],
-                            kalori_harian = kalori_harian,
-                            sisa_kalori = sisa_kalori,
-                            menu='data', submenu='data', dataset_df=dataset_df)
-
-    #return data_user_output
+            'id_makanan':i
+        }
+        save_rec(data_rekomendasi)
+    #return render_template("recommender.html",
+    #                        pageData=pageData,
+    #                        berat_badan = data['berat_badan'],
+    #                        tinggi_badan = data['tinggi_badan'],
+    #                        usia = data['usia'],
+    #                        kalori_harian = kalori_harian,
+    #                        sisa_kalori = sisa_kalori,
+    #                        menu='data', submenu='data', dataset_df=dataset_df)
+    
+    return data_user_output
 
 
         

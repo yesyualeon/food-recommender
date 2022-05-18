@@ -195,22 +195,6 @@ def recommender():
         "breadcrumb": "Rekomendasi",
         "pageHeader": "Sistem Rekomendasi"
     }
-    #with open('/Users/elisha/flask-project/app/module/makanan_dan_resep_needed.csv', encoding= 'unicode_escape') as csv_file:
-    #    data = csv.reader(csv_file, delimiter=',')
-    #    first_line = True
-    #    dataset = []
-    #    for row in data:
-    #        if not first_line:
-    #            dataset.append({
-    #            "nama_makanan": row[1],
-    #            "energi": row[2],
-    #            "protein": row[3],
-    #            "natrium" : row[4],
-    #            "bahan_stemmed" : row[5],
-    #            "langkah" : row[6]
-    #            })
-    #        else:
-    #            first_line = False
 
     with open('/Users/elisha/flask-project/app/module/food_dataset_seminar.csv', encoding= 'unicode_escape') as csv_file:
         data = csv.reader(csv_file, delimiter=',')
@@ -570,8 +554,14 @@ def inputData(id):
     }
     print(data)
     result = UserController.sisaKalori(data)
-    #return UserController.save()
-    return result
+    return render_template("recommender.html",
+                            pageData=pageData,
+                            berat_badan = result['berat_badan'],
+                            tinggi_badan = result['tinggi_badan'],
+                            usia = result['usia'],
+                            kalori_harian = result['kalori_harian'],
+                            sisa_kalori = result['sisa_kalori'],
+                            menu='data', submenu='data', dataset_df=result['dataset_df'])
     #else:
     #    return render_template("recommender.html", id=id, pageData=pageData)
 
