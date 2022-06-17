@@ -390,7 +390,11 @@ def sisaKalori(data):
                         'usia' : data['usia'],
                         'kalori_harian' : kalori_harian,
                         'sisa_kalori' : sisa_kalori,
-                        'dataset_df' : dataset_df
+                        'dataset_df' : dataset_df,
+                        'kalori_pagi' : kalori_pagi,
+                        'kalori_siang' : kalori_siang,
+                        'kalori_malam' : kalori_malam,
+                        'waktu_makan' : data['waktu_makan']
     }
     id_makanan = personal_recommendations.index
     id_makanan = id_makanan.tolist()

@@ -78,9 +78,11 @@
         </div>
         <div class="panel panel-default">
             <div class="panel-heading">Rekomendasi untuk kamu</div>
+           
             <div class="panel-body btn-margins">
                 <div class="col-md-12">
                     <table class="table table-hover">
+                        {% if waktu_makan == '0' %}
                         <thead>
                             <tr>
                                 <th>Row</th>
@@ -92,9 +94,9 @@
                                 <th>Natrium (miligram)</th>
                                 <th>Bahan - bahan</th>
                                 <th>Langkah Memasak</th>
-                                <th>Porsi Pagi (gram)</th>
-                                <th>Porsi Siang (gram)</th>
-                                <th>Porsi Malam (gram)</th>
+                                <!--<th>Porsi Pagi {{sisa_kalori*25/100}} kkal</th>-->
+                                <th>Porsi Siang {{sisa_kalori*30/100}} kkal</th>
+                                <th>Porsi Malam {{sisa_kalori*25/100}} kkal</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -109,12 +111,51 @@
                                 <td>{{ dataset_df.natrium }}</td>
                                 <td>{{ dataset_df.bahan_bahan }}</td>
                                 <td>{{ dataset_df.langkah }}</td>
-                                <td>{{ dataset_df.pagi }}</td>
-                                <td>{{ dataset_df.siang }}</td>
-                                <td>{{ dataset_df.malam }}</td>
+                                <!--<td>{{ dataset_df.pagi }} atau {{ (dataset_df.pagi / 10)|round }} sendok makan</td>-->
+                                <td>{{ dataset_df.siang }} atau {{ (dataset_df.siang / 10)|round }} sendok makan</td>
+                                <td>{{ dataset_df.malam }} atau {{ (dataset_df.malam / 10)|round }} sendok makan</td>
                             </tr>
                             {% endfor %}
                         </tbody>
+                        {% elif waktu_makan == '1' %}
+                        <thead>
+                            <tr>
+                                <th>Row</th>
+                                <th>Nama Makanan</th>
+                                <th>Energi/100 gram (kkal)</th>
+                                <th>Protein (gram)</th>
+                                <th>Lemak (gram)</th>
+                                <th>Karbohidrat (gram)</th>
+                                <th>Natrium (miligram)</th>
+                                <th>Bahan - bahan</th>
+                                <th>Langkah Memasak</th>
+                                <th>Porsi Malam {{sisa_kalori*25/100}} kkal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for dataset_df in dataset_df %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{{ dataset_df.nama_makanan }}</td>
+                                <td>{{ dataset_df.energi }}</td>
+                                <td>{{ dataset_df.protein }}</td>
+                                <td>{{ dataset_df.lemak }}</td>
+                                <td>{{ dataset_df.karbo }}</td>
+                                <td>{{ dataset_df.natrium }}</td>
+                                <td>{{ dataset_df.bahan_bahan }}</td>
+                                <td>{{ dataset_df.langkah }}</td>
+                                <td>{{ dataset_df.malam }} atau {{ (dataset_df.malam / 10)|round }} sendok makan</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        {% elif waktu_makan == '2' %}
+                        <thead>
+                            <th>Data Tidak Tersedia</th>
+                        </thead>
+                        <tbody>
+                            <tr>Anda sudah cukup makan hari ini</tr>
+                        </tbody>
+                        {% endif %}
                     </table>
                 </div>
             </div>

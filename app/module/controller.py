@@ -1,7 +1,7 @@
 from crypt import methods
 from turtle import heading
 from unicodedata import name
-from flask import render_template, request, session, redirect, url_for
+from flask import render_template, request, session, redirect, url_for, make_response
 from sklearn import datasets
 from app import app
 from app.model.akun import Akun
@@ -539,6 +539,7 @@ def inputData(id):
     eaten_food = request.form["eaten_food"]
     #eaten_food = [eaten_food]
     eaten_food_mass = request.form["eaten_food_mass"]
+    waktu_makan = request.form["waktu_makan"]
     data = {
         'id_user': id,
         'berat_badan': berat_badan,
@@ -550,9 +551,12 @@ def inputData(id):
         'c_makanan': c_makanan,
         'pref_bahan': pref_bahan,
         'eaten_food': eaten_food,
-        'eaten_food_mass': eaten_food_mass
+        'eaten_food_mass': eaten_food_mass,
+        'waktu_makan': waktu_makan
     }
     print(data)
+    #resp = make_response(render_template('recommender.html'))
+    #resp.set_cookie('waktuID', waktu_makan)
     result = UserController.sisaKalori(data)
     return render_template("recommender.html",
                             pageData=pageData,
@@ -561,6 +565,7 @@ def inputData(id):
                             usia = result['usia'],
                             kalori_harian = result['kalori_harian'],
                             sisa_kalori = result['sisa_kalori'],
+                            waktu_makan = result['waktu_makan'],
                             menu='data', submenu='data', dataset_df=result['dataset_df'])
     #else:
     #    return render_template("recommender.html", id=id, pageData=pageData)
